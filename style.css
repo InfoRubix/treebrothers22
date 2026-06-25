@@ -248,7 +248,8 @@ section { position: relative; }
   border: 1.5px solid rgba(255,255,255,0.65); display: grid; place-items: center;
   transition: background 0.4s var(--ease), color 0.4s var(--ease), transform 0.4s var(--ease);
 }
-.svc-c-arrow svg { width: 16px; height: 16px; }
+.svc-c-arrow svg { width: 16px; height: 16px; transition: transform 0.4s var(--ease); }
+.svc-c.active .svc-c-arrow svg { transform: rotate(135deg); }
 .svc-c.active .svc-c-arrow, .svc-c:hover .svc-c-arrow { background: #fff; color: #0c0c0e; border-color: #fff; transform: scale(1.08); }
 .svc-c-body { position: absolute; left: 20px; right: 20px; bottom: 20px; z-index: 2; }
 .svc-c-body h3 { font-size: 1.18rem; line-height: 1.2; letter-spacing: -0.02em; margin-bottom: 0; transition: margin-bottom 0.45s var(--ease); }
