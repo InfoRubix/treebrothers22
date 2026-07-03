@@ -1,5 +1,5 @@
 /* =========================================================
-   TREE BROTHERS — Shared interactions
+   TREEsBROTHERS — Shared interactions
    Loaded on every page; each block guards for its elements.
    ========================================================= */
 document.addEventListener("DOMContentLoaded", () => {
@@ -23,6 +23,17 @@ document.addEventListener("DOMContentLoaded", () => {
         toggle.classList.remove("open");
       }),
     );
+    // auto-close the mobile menu when the user scrolls
+    window.addEventListener(
+      "scroll",
+      () => {
+        if (menu.classList.contains("open")) {
+          menu.classList.remove("open");
+          toggle.classList.remove("open");
+        }
+      },
+      { passive: true },
+    );
   }
 
   /* ---------- Reveal on scroll ---------- */
@@ -42,18 +53,7 @@ document.addEventListener("DOMContentLoaded", () => {
     reveals.forEach((el) => io.observe(el));
   }
 
-  /* ---------- Home: Services cards — click to toggle description ---------- */
-  const svcCards = document.querySelectorAll(".svc-cards .svc-c");
-  if (svcCards.length) {
-    svcCards.forEach((card) => {
-      card.addEventListener("click", () => {
-        const wasActive = card.classList.contains("active");
-        svcCards.forEach((c) => c.classList.remove("active"));
-        // click an open card to close it (leaving only the title)
-        if (!wasActive) card.classList.add("active");
-      });
-    });
-  }
+  /* Home service cards are links to services.html; description shows on hover (CSS). */
 
   /* ---------- Home/Portfolio: Featured project swap ---------- */
   const featured = document.querySelector("[data-featured]");
@@ -195,16 +195,40 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  /* ---------- Contact form (front-end only) ---------- */
+  /* ---------- Contact form -> email via FormSubmit ---------- */
   const form = document.querySelector(".contact-form");
   if (form) {
+    const ENDPOINT = "https://formsubmit.co/ajax/info@treebrothers.com.my";
     form.addEventListener("submit", (e) => {
       e.preventDefault();
       const note = form.querySelector(".form-note");
-      const name = form.querySelector("#name");
-      note.textContent = `Thank you${name && name.value ? ", " + name.value.split(" ")[0] : ""}! Your message has been received — our team will reply within 24 hours.`;
-      note.style.color = "#1d8f4a";
-      form.reset();
+      const val = (id) => (form.querySelector(id) ? form.querySelector(id).value : "");
+      const data = {
+        name: val("#name"),
+        email: val("#email"),
+        phone: val("#phone"),
+        message: val("#message"),
+        _subject: "New enquiry — Tree Brothers website",
+      };
+      note.style.color = "";
+      note.textContent = "Sending…";
+      fetch(ENDPOINT, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify(data),
+      })
+        .then((r) => r.json())
+        .then(() => {
+          const first = data.name ? ", " + data.name.split(" ")[0] : "";
+          note.textContent = `Thank you${first}! Your message has been sent — we'll reply within 24 hours.`;
+          note.style.color = "#1d8f4a";
+          form.reset();
+        })
+        .catch(() => {
+          note.textContent =
+            "Sorry, something went wrong. Please email us directly at info@treebrothers.com.my.";
+          note.style.color = "#c0392b";
+        });
     });
   }
 
