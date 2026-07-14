@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://treebrothers22.netlify.app/sitemap.xml
